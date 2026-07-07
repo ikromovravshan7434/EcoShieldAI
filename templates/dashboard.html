@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}EcoShield AI — Bosh sahifa{% endblock %}
+{% block body %}
+<header class="topbar">
+  <a class="brand-line" href="{{ url_for('dashboard') }}">
+    <img src="{{ url_for('static', filename='img/ecoshield-logo.png') }}" alt="EcoShield AI">
+    <div>
+      <strong>EcoShield AI</strong>
+      <span>Hududiy monitoring paneli</span>
+    </div>
+  </a>
+
+  <nav class="topnav">
+    <a class="active" href="{{ url_for('dashboard') }}">Bosh sahifa</a>
+    <a href="{{ url_for('map_page') }}">Hudud xaritasi</a>
+    <a href="{{ url_for('logout') }}">Chiqish</a>
+  </nav>
+</header>
+
+<main class="dashboard-page">
+  <section class="hero-board">
+    <div class="hero-copy">
+      <span class="capsule">Eco monitoring • live wind • sand shift</span>
+      <h1>Shamol va qum ko‘chishini kuzatadigan noodatiy hudud platformasi</h1>
+      <p>Qorako‘l va Olot hududlarida shamol tezligi, shamol yo‘nalishi hamda qum ko‘chishi xavfini bitta boshqaruv panelida ko‘rsatadi.</p>
+      <a class="main-btn inline" href="{{ url_for('map_page') }}">Hudud xaritasini ochish</a>
+    </div>
+
+    <div class="hero-panel">
+      <div class="panel-head">
+        <h3>Jonli shamol ko‘rsatkichi <div class="live-dot"></div></h3>
+        <span id="liveUpdateTime">yangilanmoqda...</span>
+      </div>
+      <div class="live-grid">
+        <div class="live-item">
+          <label>O‘rtacha tezlik</label>
+          <strong id="avgWind">-- m/s</strong>
+        </div>
+        <div class="live-item">
+          <label>Asosiy yo‘nalish</label>
+          <strong id="domDirection">--</strong>
+        </div>
+        <div class="live-item">
+          <label>Eng yuqori nuqta</label>
+          <strong id="peakStation">--</strong>
+        </div>
+        <div class="live-item">
+          <label>Maksimal tezlik</label>
+          <strong id="peakSpeed">-- m/s</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cards-grid">
+    <article class="glass-card">
+      <h3>Yuqori xavf zonalari</h3>
+      <div class="big-number">18 ta</div>
+      <p>Shamol va ochiq tuproq yuzalari asosida ajratilgan hududlar.</p>
+    </article>
+    <article class="glass-card">
+      <h3>Degradatsiyalangan maydon</h3>
+      <div class="big-number">12 450 ga</div>
+      <p>Pilot hudud bo‘yicha demo tahlil natijasi.</p>
+    </article>
+    <article class="glass-card">
+      <h3>Monitoring nuqtalari</h3>
+      <div class="big-number">32 ta</div>
+      <p>Dala va masofadan zondlash tekshiruv nuqtalari.</p>
+    </article>
+    <article class="glass-card accent">
+      <h3>Qum ko‘chishi holati</h3>
+      <div class="big-number">Faol</div>
+      <p>Shamol oqimiga mos dinamik xavf bahosi.</p>
+    </article>
+  </section>
+
+  <section class="station-strip">
+    <div class="section-title">
+      <h2>Hududlar bo‘yicha jonli shamol</h2>
+      <p>Ochiq ma’lumotlar API orqali yangilanadi.</p>
+    </div>
+    <div class="station-grid" id="stationGrid"></div>
+  </section>
+
+  <footer class="site-footer">by Ikromov</footer>
+</main>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,145 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Qorako‘l qum o‘tish zonasi",
+        "risk": "Juda yuqori",
+        "area_ha": 4180
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              63.62,
+              39.62
+            ],
+            [
+              64.0,
+              39.57
+            ],
+            [
+              64.06,
+              39.77
+            ],
+            [
+              63.75,
+              39.84
+            ],
+            [
+              63.62,
+              39.62
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Olot janubiy chekka hududi",
+        "risk": "Yuqori",
+        "area_ha": 3270
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              63.48,
+              39.25
+            ],
+            [
+              63.86,
+              39.24
+            ],
+            [
+              63.9,
+              39.43
+            ],
+            [
+              63.59,
+              39.51
+            ],
+            [
+              63.48,
+              39.25
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Qorako‘l markaziy pilot hududi",
+        "risk": "O‘rta",
+        "area_ha": 2450
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              63.86,
+              39.56
+            ],
+            [
+              64.2,
+              39.57
+            ],
+            [
+              64.19,
+              39.76
+            ],
+            [
+              63.95,
+              39.82
+            ],
+            [
+              63.86,
+              39.56
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Olot sharqiy nisbatan barqaror hududi",
+        "risk": "Past",
+        "area_ha": 2550
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              63.9,
+              39.35
+            ],
+            [
+              64.2,
+              39.35
+            ],
+            [
+              64.19,
+              39.53
+            ],
+            [
+              63.96,
+              39.58
+            ],
+            [
+              63.9,
+              39.35
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

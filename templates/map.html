@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}EcoShield AI — Hudud xaritasi{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+{% block body %}
+<header class="topbar">
+  <a class="brand-line" href="{{ url_for('dashboard') }}">
+    <img src="{{ url_for('static', filename='img/ecoshield-logo.png') }}" alt="EcoShield AI">
+    <div>
+      <strong>EcoShield AI</strong>
+      <span>Hududiy monitoring paneli</span>
+    </div>
+  </a>
+
+  <nav class="topnav">
+    <a href="{{ url_for('dashboard') }}">Bosh sahifa</a>
+    <a class="active" href="{{ url_for('map_page') }}">Hudud xaritasi</a>
+    <a href="{{ url_for('logout') }}">Chiqish</a>
+  </nav>
+</header>
+
+<main class="map-shell">
+  <div class="floating-panel glass-panel">
+    <div class="side-top">
+      <span class="capsule">Hudud qatlamlari</span>
+      <h2>Shamol va qum ko‘chishi</h2>
+    </div>
+
+    <div class="toggle-group">
+      <label class="toggle-row">
+        <input type="checkbox" id="riskToggle" checked>
+        <span>Xavf zonalari</span>
+      </label>
+      <label class="toggle-row">
+        <input type="checkbox" id="windToggle" checked>
+        <span>Shamol strelkalari</span>
+      </label>
+      <label class="toggle-row">
+        <input type="checkbox" id="sandToggle" checked>
+        <span>Qum ko‘chishi oqimi</span>
+      </label>
+    </div>
+
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <label>O‘rtacha tezlik</label>
+        <strong id="mapAvgWind">-- m/s</strong>
+      </div>
+      <div class="mini-stat">
+        <label>Ustun yo‘nalish</label>
+        <strong id="mapDirection">--</strong>
+      </div>
+    </div>
+
+    <div class="legend-box">
+      <h3>Xavf shkalasi</h3>
+      <div class="legend-row"><i class="lg low"></i> Past</div>
+      <div class="legend-row"><i class="lg med"></i> O‘rta</div>
+      <div class="legend-row"><i class="lg hi"></i> Yuqori</div>
+      <div class="legend-row"><i class="lg vhi"></i> Juda yuqori</div>
+    </div>
+
+    <div class="api-note">
+      Shamol ma’lumotlari ochiq meteorologik API asosida olinadi va davriy yangilanadi.
+    </div>
+  </div>
+
+  <div id="map"></div>
+</main>
+
+<footer class="site-footer">by Ikromov</footer>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/map_live.js') }}"></script>
+{% endblock %}
