@@ -18,13 +18,29 @@ let riskLayer = L.layerGroup().addTo(map);
 let windLayer = L.layerGroup().addTo(map);
 let sandLayer = L.layerGroup().addTo(map);
 
-function windIcon(speed, directionDeg){
+function getFlowDirection(windFromDeg) {
+  // Open-Meteo yo‘nalishi: shamol qayerdan kelmoqda.
+  // Bizga oqim qayerga ketayotgani kerak.
+  return (windFromDeg + 180) % 360;
+}
+
+function windIcon(speed, windFromDeg) {
+  const flowDeg = getFlowDirection(windFromDeg);
+
+  // ➤ belgisi dastlab sharqqa qarab turadi.
+  // Meteorologik 0° esa shimol, shu sabab -90° tuzatish kiritiladi.
+  const cssRotation = (flowDeg - 90 + 360) % 360;
+
   const size = Math.max(42, Math.min(62, 40 + speed * 1.4));
+
   return L.divIcon({
-    className: 'wind-icon-wrapper',
+    className: "wind-icon-wrapper",
     html: `
-      <div style="display:flex;flex-direction:column;align-items:center;">
-        <div class="wind-arrow" style="transform:rotate(${directionDeg}deg);width:${size}px;height:${size}px;">
+      <div style="display:flex; flex-direction:column; align-items:center;">
+        <div class="wind-arrow"
+             style="transform:rotate(${cssRotation}deg);
+                    width:${size}px;
+                    height:${size}px;">
           <span>➤</span>
         </div>
         <div class="wind-label">${speed} m/s</div>
@@ -35,31 +51,51 @@ function windIcon(speed, directionDeg){
   });
 }
 
-function createSandFlow(lat, lon, directionDeg, speed){
+function createSandFlow(lat, lon, windFromDeg, speed) {
+  const flowDeg = getFlowDirection(windFromDeg);
+  const rad = flowDeg * Math.PI / 180;
+
   const length = 0.08 + speed * 0.008;
-  const rad = (directionDeg - 180) * Math.PI / 180.0;
+
+  // Bearing: 0° shimol, 90° sharq
   const endLat = lat + Math.cos(rad) * length;
-  const endLon = lon + Math.sin(rad) * length;
-  const line = L.polyline([[lat, lon], [endLat, endLon]], {
-    color: '#f6c26f',
-    weight: Math.max(2, speed / 2),
-    opacity: 0.9,
-    dashArray: '8, 12'
-  });
+
+  // Longitude masofasini geografik kenglikka moslashtirish
+  const lonCorrection = Math.cos(lat * Math.PI / 180);
+  const endLon = lon + (Math.sin(rad) * length) / lonCorrection;
+
+  const line = L.polyline(
+    [[lat, lon], [endLat, endLon]],
+    {
+      color: "#f6c26f",
+      weight: Math.max(2, speed / 2),
+      opacity: 0.9,
+      dashArray: "8, 12"
+    }
+  );
+
   const trail = [];
-  for(let i=1;i<=4;i++){
-    const t = i / 5;
-    trail.push(L.circleMarker(
-      [lat + (endLat-lat)*t, lon + (endLon-lon)*t],
-      {
-        radius: 2 + i,
-        color: '#f6c26f',
-        fillColor: '#f6c26f',
-        fillOpacity: 0.20 + i*0.15,
-        weight: 0
-      }
-    ));
+
+  for (let i = 1; i <= 6; i++) {
+    const t = i / 7;
+
+    trail.push(
+      L.circleMarker(
+        [
+          lat + (endLat - lat) * t,
+          lon + (endLon - lon) * t
+        ],
+        {
+          radius: 2 + i * 0.7,
+          color: "#f6c26f",
+          fillColor: "#f6c26f",
+          fillOpacity: 0.25 + i * 0.1,
+          weight: 0
+        }
+      )
+    );
   }
+
   return { line, trail };
 }
 
