@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EcoShield AI — Yashil to‘siq demo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#061318;color:white}
+header{padding:14px 20px;background:#082028;border-bottom:1px solid #244;display:flex;justify-content:space-between;align-items:center}
+header strong{color:#50e6a0;font-size:22px}
+main{display:grid;grid-template-columns:320px 1fr;height:calc(100vh - 58px)}
+aside{padding:18px;background:#0a2229;overflow:auto}
+.card{padding:14px;border-radius:14px;background:#0d2a31;border:1px solid #22414a;margin-bottom:12px}
+.card h3{margin:0 0 10px}
+button{width:100%;padding:12px;border:0;border-radius:10px;background:#18b966;color:white;font-weight:bold;cursor:pointer;margin-top:8px}
+select{width:100%;padding:10px;border-radius:8px;background:#102e35;color:white;border:1px solid #355}
+#map{height:100%;width:100%}
+.legend-line{height:10px;border-radius:8px;background:#14d66f;margin:8px 0;box-shadow:0 0 10px #14d66f}
+.note{color:#a9c1bb;font-size:13px;line-height:1.5}
+@media(max-width:800px){main{grid-template-columns:1fr;height:auto}aside{order:2}#map{height:65vh}}
+</style>
+</head>
+<body>
+<header><strong>EcoShield AI</strong><span>Dinamik yashil himoya tavsiyasi</span></header>
+<main>
+<aside>
+  <div class="card">
+    <h3>Shamol yo‘nalishini sinash</h3>
+    <label>Shamol qayerdan kelmoqda?</label>
+    <select id="windDirection">
+      <option value="315">Shimoli-g‘arb</option>
+      <option value="270">G‘arb</option>
+      <option value="225">Janubi-g‘arb</option>
+      <option value="180">Janub</option>
+      <option value="90">Sharq</option>
+      <option value="45">Shimoli-sharq</option>
+      <option value="0">Shimol</option>
+    </select>
+    <button id="apply">Tavsiyani yangilash</button>
+  </div>
+  <div class="card">
+    <h3>Tavsiya etilgan yashil to‘siq</h3>
+    <div class="legend-line"></div>
+    <p id="directionText">Yo‘nalish: --</p>
+    <p>Uzunlik: 4.3 km</p>
+    <p>Kenglik: 25–40 m</p>
+    <p class="note">Bu ekilgan daraxtzor emas. Shamol va qum oqimi yo‘nalishi asosida tavsiya qilinadigan yashil himoya yo‘lagi.</p>
+  </div>
+</aside>
+<div id="map"></div>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map=L.map("map").setView([39.47,63.83],10);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19}).addTo(map);
+let layers=L.layerGroup().addTo(map);
+const center=[39.47,63.83];
+
+function dest(lat,lon,bearing,distance){
+  const r=bearing*Math.PI/180,lr=lat*Math.PI/180;
+  return [lat+Math.cos(r)*distance,lon+(Math.sin(r)*distance)/Math.max(Math.cos(lr),.25)];
+}
+function rotation(deg){return (deg-90+360)%360}
+function redraw(){
+  layers.clearLayers();
+  const from=Number(document.getElementById("windDirection").value);
+  const flow=(from+180)%360;
+  const barrier=(flow+90)%360;
+
+  // Wind arrows
+  [[0,0],[.08,.05],[-.08,.06],[.07,-.07],[-.07,-.06]].forEach(o=>{
+    const icon=L.divIcon({className:"",html:`<div style="font-size:24px;color:#27bde4;transform:rotate(${rotation(flow)}deg)">➤</div>`,iconSize:[28,28]});
+    layers.addLayer(L.marker([center[0]+o[0],center[1]+o[1]],{icon}));
+  });
+
+  // Sand
+  const sandEnd=dest(center[0],center[1],flow,.22);
+  layers.addLayer(L.polyline([center,sandEnd],{color:"#ffb000",weight:4,dashArray:"7,7"}));
+
+  // Barrier
+  const c=dest(center[0],center[1],flow,.11);
+  const a=dest(c[0],c[1],barrier+180,.09);
+  const b=dest(c[0],c[1],barrier,.09);
+  const a2=dest(a[0],a[1],flow,.06);
+  const b2=dest(b[0],b[1],flow,.06);
+  layers.addLayer(L.polygon([a,b,b2,a2],{color:"#2de683",fillColor:"#2de683",fillOpacity:.18,dashArray:"6,6"}));
+  layers.addLayer(L.polyline([a,b],{color:"#14d66f",weight:12,lineCap:"round"}));
+  layers.addLayer(L.polyline([a,b],{color:"#c8ffda",weight:2,dashArray:"8,7"}));
+
+  for(let i=0;i<=12;i++){
+    const t=i/12;
+    const lat=a[0]+(b[0]-a[0])*t;
+    const lon=a[1]+(b[1]-a[1])*t;
+    layers.addLayer(L.circleMarker([lat,lon],{
+      radius:4.2,
+      color:"#b9ffd2",
+      fillColor:"#22dc72",
+      fillOpacity:.95,
+      weight:1.2
+    }));
+  }
+
+  document.getElementById("directionText").textContent=`Yo‘nalish: ${Math.round(barrier)}°`;
+}
+document.getElementById("apply").addEventListener("click",redraw);
+redraw();
+</script>
+</body>
+</html>

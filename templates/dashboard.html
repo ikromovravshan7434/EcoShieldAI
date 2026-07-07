@@ -1,91 +1,115 @@
 {% extends "base.html" %}
-{% block title %}EcoShield AI — Bosh sahifa{% endblock %}
+{% block title %}EcoShield AI — Kunlik monitoring{% endblock %}
+
 {% block body %}
 <header class="topbar">
-  <a class="brand-line" href="{{ url_for('dashboard') }}">
+  <a class="brand" href="{{ url_for('dashboard') }}">
     <img src="{{ url_for('static', filename='img/ecoshield-logo.png') }}" alt="EcoShield AI">
     <div>
       <strong>EcoShield AI</strong>
-      <span>Hududiy monitoring paneli</span>
+      <span>Ekologik monitoring platformasi</span>
     </div>
   </a>
 
-  <nav class="topnav">
+  <nav>
     <a class="active" href="{{ url_for('dashboard') }}">Bosh sahifa</a>
     <a href="{{ url_for('map_page') }}">Hudud xaritasi</a>
+    <a href="#monitoring">Monitoring</a>
+    <a href="#analysis">Tahlil</a>
     <a href="{{ url_for('logout') }}">Chiqish</a>
   </nav>
 </header>
 
-<main class="dashboard-page">
-  <section class="hero-board">
-    <div class="hero-copy">
-      <span class="capsule">Eco monitoring • live wind • sand shift</span>
-      <h1>Shamol va qum ko‘chishini kuzatadigan noodatiy hudud platformasi</h1>
-      <p>Qorako‘l va Olot hududlarida shamol tezligi, shamol yo‘nalishi hamda qum ko‘chishi xavfini bitta boshqaruv panelida ko‘rsatadi.</p>
-      <a class="main-btn inline" href="{{ url_for('map_page') }}">Hudud xaritasini ochish</a>
+<main class="dashboard">
+  <section class="dashboard-heading">
+    <div>
+      <h1>Harorat va chang bo‘ronlari kunlik monitoring tizimi</h1>
+      <p>Qorako‘l va Olot hududlari bo‘yicha harorat, shamol, chang bo‘roni xavfi va o‘simlik qoplami holatini kuzatib boradi.</p>
     </div>
-
-    <div class="hero-panel">
-      <div class="panel-head">
-        <h3>Jonli shamol ko‘rsatkichi <div class="live-dot"></div></h3>
-        <span id="liveUpdateTime">yangilanmoqda...</span>
-      </div>
-      <div class="live-grid">
-        <div class="live-item">
-          <label>O‘rtacha tezlik</label>
-          <strong id="avgWind">-- m/s</strong>
-        </div>
-        <div class="live-item">
-          <label>Asosiy yo‘nalish</label>
-          <strong id="domDirection">--</strong>
-        </div>
-        <div class="live-item">
-          <label>Eng yuqori nuqta</label>
-          <strong id="peakStation">--</strong>
-        </div>
-        <div class="live-item">
-          <label>Maksimal tezlik</label>
-          <strong id="peakSpeed">-- m/s</strong>
-        </div>
-      </div>
-    </div>
+    <a class="map-link" href="{{ url_for('map_page') }}">Hudud xaritasini ochish <span>→</span></a>
   </section>
 
-  <section class="cards-grid">
-    <article class="glass-card">
-      <h3>Yuqori xavf zonalari</h3>
-      <div class="big-number">18 ta</div>
-      <p>Shamol va ochiq tuproq yuzalari asosida ajratilgan hududlar.</p>
+  <section class="dashboard-cards">
+    <article class="data-card temperature">
+      <h3>Bugungi harorat</h3>
+      <strong id="currentTemp">--°C</strong>
+      <p>Hozirgi harorat</p>
+      <div><span>Min: <b id="minTemp">--°C</b></span><span>Maks: <b id="maxTemp">--°C</b></span></div>
     </article>
-    <article class="glass-card">
-      <h3>Degradatsiyalangan maydon</h3>
-      <div class="big-number">12 450 ga</div>
-      <p>Pilot hudud bo‘yicha demo tahlil natijasi.</p>
+
+    <article class="data-card dust">
+      <h3>Chang bo‘roni xavfi</h3>
+      <strong id="dustRisk">--</strong>
+      <p id="dustText">Hisoblanmoqda...</p>
+      <div class="progress"><i id="dustProgress"></i></div>
     </article>
-    <article class="glass-card">
+
+    <article class="data-card wind">
+      <h3>Shamol holati</h3>
+      <strong><span id="windSpeed">--</span> <small>m/s</small></strong>
+      <p>Yo‘nalish: <b id="windDirection">--</b></p>
+      <div>Gust: <b id="windGust">-- m/s</b></div>
+    </article>
+
+    <article class="data-card ndvi">
+      <h3>O‘simlik qoplami (NDVI)</h3>
+      <strong id="ndviValue">--</strong>
+      <p><span class="status">O‘rtacha</span></p>
+      <div class="ndvi-scale"><i id="ndviMarker"></i></div>
+    </article>
+
+    <article class="data-card points">
       <h3>Monitoring nuqtalari</h3>
-      <div class="big-number">32 ta</div>
-      <p>Dala va masofadan zondlash tekshiruv nuqtalari.</p>
+      <strong id="monitoringPoints">12</strong>
+      <p>Faol nuqtalar</p>
+      <div><span class="online"></span> Online: 12</div>
     </article>
-    <article class="glass-card accent">
-      <h3>Qum ko‘chishi holati</h3>
-      <div class="big-number">Faol</div>
-      <p>Shamol oqimiga mos dinamik xavf bahosi.</p>
+
+    <article class="data-card soil">
+      <h3>Ochiq tuproq maydoni</h3>
+      <strong id="openSoil">17.6%</strong>
+      <p>Hudud ulushi</p>
+      <div>Tendensiya: ↑ 2.3%</div>
     </article>
   </section>
 
-  <section class="station-strip">
-    <div class="section-title">
-      <h2>Hududlar bo‘yicha jonli shamol</h2>
-      <p>Ochiq ma’lumotlar API orqali yangilanadi.</p>
-    </div>
-    <div class="station-grid" id="stationGrid"></div>
+  <section class="dashboard-lower" id="monitoring">
+    <article class="chart-card">
+      <div class="section-title">
+        <h2>24 soatlik monitoring</h2>
+        <div><span class="temp-key">Harorat</span><span class="dust-key">Chang xavfi</span></div>
+      </div>
+      <canvas id="dailyChart" height="125"></canvas>
+      <div class="data-source">
+        <span>● Jonli ma’lumot</span>
+        <span id="dataSource">Open-Meteo</span>
+        <span id="updatedAt">Yangilanish: --</span>
+      </div>
+    </article>
+
+    <article class="region-card-wrap" id="analysis">
+      <h2>Hududlar bo‘yicha holat</h2>
+      <div id="regionCards"></div>
+    </article>
+
+    <article class="pilot-card">
+      <h2>Buxoro viloyati — Pilot hudud</h2>
+      <div class="pilot-map">
+        <div class="pilot-shape"></div>
+        <div class="pilot-point qorakol"><span>Qorako‘l</span></div>
+        <div class="pilot-point olot"><span>Olot</span></div>
+      </div>
+    </article>
   </section>
 
-  <footer class="site-footer">by Ikromov</footer>
+  <footer class="footer">
+    <span>Biz tabiatni himoya qilamiz, kelajakni asraymiz.</span>
+    <span>by Ikromov</span>
+  </footer>
 </main>
 {% endblock %}
+
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

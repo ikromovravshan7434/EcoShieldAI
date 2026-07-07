@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ecoshield-ai
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@ecoshieldai.uz
+      - key: ADMIN_PASSWORD_HASH
+        sync: false

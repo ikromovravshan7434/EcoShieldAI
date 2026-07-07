@@ -1,29 +1,29 @@
 {% extends "base.html" %}
 {% block title %}EcoShield AI — Kirish{% endblock %}
+
 {% block body %}
-<main class="login-shell">
-  <section class="login-left">
-    <div class="brand-box">
-      <img src="{{ url_for('static', filename='img/ecoshield-logo.png') }}" alt="EcoShield AI" class="brand-logo">
+<main class="login-page">
+  <section class="login-visual">
+    <div class="login-brand">
+      <img src="{{ url_for('static', filename='img/ecoshield-logo.png') }}" alt="EcoShield AI">
       <div>
-        <h1>EcoShield AI</h1>
-        <p>Hudud monitoringi, shamol va qum ko‘chishi tahlili</p>
+        <strong>EcoShield AI</strong>
+        <span>Ekologik monitoring platformasi</span>
       </div>
     </div>
 
-    <div class="login-hero">
-      <span class="capsule">AI • RS • Hudud tahlili</span>
-      <h2>Shamol tezligi, yo‘nalishi va qum ko‘chishini bir panelda ko‘ring.</h2>
-      <p>Ochiq meteorologik ma’lumotlar, hududiy xavf zonalari va monitoring tahlillarini birlashtiruvchi ekologik platforma.</p>
-      <div class="login-bg-mesh"></div>
+    <div class="login-message">
+      <span class="pill">AI • Hudud tahlili • Jonli shamol</span>
+      <h1>Harorat, shamol, chang bo‘roni xavfi va qum ko‘chishini bitta tizimda kuzating.</h1>
+      <p>Qorako‘l va Olot hududlari uchun ekologik monitoring, hudud xaritasi va kunlik tahlil platformasi.</p>
     </div>
   </section>
 
-  <section class="login-right">
+  <section class="login-form-side">
     <form class="login-card" method="post">
-      <div class="eyebrow">Tizimga kirish</div>
-      <h3>Boshqaruv paneli</h3>
-      <p class="muted">Demo kirish ma’lumotlari pastda berilgan.</p>
+      <span class="eyebrow">Himoyalangan kirish</span>
+      <h2>Tizimga kirish</h2>
+      <p>Ruxsat berilgan foydalanuvchilar uchun.</p>
 
       {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -31,18 +31,14 @@
         {% endif %}
       {% endwith %}
 
-      <div class="input-group">
-        <label>Email</label>
-        <input type="email" name="email" placeholder="demo@ecoshield.uz" required>
-      </div>
-      
-      <div class="input-group">
-        <label>Parol</label>
-        <input type="password" name="password" placeholder="Parol" required>
-      </div>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="admin@ecoshieldai.uz" required>
 
-      <button type="submit" class="main-btn">Kirish</button>
-      <span class="demo-hint">Demo: demo@ecoshield.uz / EcoShield2026</span>
+      <label for="password">Parol</label>
+      <input id="password" name="password" type="password" placeholder="Parolni kiriting" required>
+
+      <button type="submit" class="primary-btn">Kirish</button>
+      <small>Mahalliy demo: admin@ecoshieldai.uz / EcoShield2026</small>
     </form>
   </section>
 </main>

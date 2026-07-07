@@ -1,77 +1,201 @@
 {% extends "base.html" %}
 {% block title %}EcoShield AI — Hudud xaritasi{% endblock %}
+
 {% block head %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 {% endblock %}
+
 {% block body %}
-<header class="topbar">
-  <a class="brand-line" href="{{ url_for('dashboard') }}">
+<header class="topbar image-design-header">
+  <a class="brand image-brand" href="{{ url_for('dashboard') }}">
     <img src="{{ url_for('static', filename='img/ecoshield-logo.png') }}" alt="EcoShield AI">
     <div>
-      <strong>EcoShield AI</strong>
+      <strong>EcoShield <em>AI</em></strong>
       <span>Hududiy monitoring paneli</span>
     </div>
   </a>
 
-  <nav class="topnav">
-    <a href="{{ url_for('dashboard') }}">Bosh sahifa</a>
-    <a class="active" href="{{ url_for('map_page') }}">Hudud xaritasi</a>
-    <a href="{{ url_for('logout') }}">Chiqish</a>
+  <nav class="image-nav">
+    <a href="{{ url_for('dashboard') }}">⌂ Bosh sahifa</a>
+    <a class="active" href="{{ url_for('map_page') }}">▱ Hudud xaritasi</a>
+    <a href="{{ url_for('logout') }}">⇥ Chiqish</a>
   </nav>
 </header>
 
-<main class="map-shell">
-  <div class="floating-panel glass-panel">
-    <div class="side-top">
-      <span class="capsule">Hudud qatlamlari</span>
-      <h2>Shamol va qum ko‘chishi</h2>
-    </div>
-
-    <div class="toggle-group">
-      <label class="toggle-row">
-        <input type="checkbox" id="riskToggle" checked>
-        <span>Xavf zonalari</span>
-      </label>
-      <label class="toggle-row">
-        <input type="checkbox" id="windToggle" checked>
-        <span>Shamol strelkalari</span>
-      </label>
-      <label class="toggle-row">
-        <input type="checkbox" id="sandToggle" checked>
-        <span>Qum ko‘chishi oqimi</span>
-      </label>
-    </div>
-
-    <div class="mini-stats">
-      <div class="mini-stat">
-        <label>O‘rtacha tezlik</label>
-        <strong id="mapAvgWind">-- m/s</strong>
+<main class="image-map-page">
+  <section class="image-map-grid">
+    <aside class="image-sidebar">
+      <div class="image-side-title">
+        <span class="stack-icon">▰</span>
+        <h2>XARITA QATLAMLARI</h2>
       </div>
-      <div class="mini-stat">
-        <label>Ustun yo‘nalish</label>
-        <strong id="mapDirection">--</strong>
+
+      <label class="image-layer-item">
+        <div class="layer-icon shield">◈</div>
+        <div class="layer-copy">
+          <b>Xavf zonalari</b>
+          <small>Past, o‘rta va yuqori xavf hududlari</small>
+        </div>
+        <span class="toggle-switch"><input id="riskToggle" type="checkbox" checked><i></i></span>
+      </label>
+
+      <label class="image-layer-item">
+        <div class="layer-icon wind">≋</div>
+        <div class="layer-copy">
+          <b>Shamol yo‘nalishi</b>
+          <small>Kunlik shamol yo‘nalishi strelkalari</small>
+        </div>
+        <span class="toggle-switch"><input id="windToggle" type="checkbox" checked><i></i></span>
+      </label>
+
+      <label class="image-layer-item">
+        <div class="layer-icon sand">☀</div>
+        <div class="layer-copy">
+          <b>Qum ko‘chishi oqimi</b>
+          <small>Dinamik qum zarrachalari yo‘nalishi</small>
+        </div>
+        <span class="toggle-switch"><input id="sandToggle" type="checkbox" checked><i></i></span>
+      </label>
+
+      <label class="image-layer-item">
+        <div class="layer-icon leaf">◒</div>
+        <div class="layer-copy">
+          <b>O‘simlik qatlami <span>(NDVI)</span></b>
+          <small>O‘simlik qoplami zichligi</small>
+        </div>
+        <span class="toggle-switch"><input id="ndviToggle" type="checkbox" checked><i></i></span>
+      </label>
+
+      <label class="image-layer-item green-recommendation-item">
+        <div class="layer-icon recommendation">▰</div>
+        <div class="layer-copy">
+          <b>Tavsiya etilgan yashil to‘siq</b>
+          <small>Joriy shamol va qum oqimiga mos tavsiya</small>
+        </div>
+        <span class="toggle-switch"><input id="greenBarrierToggle" type="checkbox" checked><i></i></span>
+      </label>
+
+      <label class="image-layer-item">
+        <div class="layer-icon roads">〽</div>
+        <div class="layer-copy">
+          <b>Yo‘l va chegaralar</b>
+          <small>Yo‘llar, tuman va viloyat chegaralari</small>
+        </div>
+        <span class="toggle-switch off"><input id="boundaryToggle" type="checkbox"><i></i></span>
+      </label>
+
+      <section class="image-risk-card">
+        <h3>XAVF SHKALASI</h3>
+        <div class="risk-columns">
+          <div><i class="dot green"></i><span>Past</span><small>0 - 0.3</small></div>
+          <div><i class="dot orange"></i><span>O‘rta</span><small>0.3 - 0.6</small></div>
+          <div><i class="dot red"></i><span>Yuqori</span><small>0.6 - 1.0</small></div>
+        </div>
+
+        <div class="green-legend-row">
+          <i></i>
+          <span>Tavsiya etilgan yashil to‘siq</span>
+        </div>
+      </section>
+
+
+      <section class="green-recommendation-card">
+        <div class="recommendation-card-title">
+          <span>▰</span>
+          <h3>JORIY YASHIL HIMOYA TAVSIYASI</h3>
+        </div>
+        <div class="recommendation-data">
+          <div><span>Yo‘nalish</span><strong id="greenBarrierDirection">--</strong></div>
+          <div><span>Uzunlik</span><strong id="greenBarrierLength">-- km</strong></div>
+          <div><span>Kenglik</span><strong id="greenBarrierWidth">25–40 m</strong></div>
+          <div><span>Holat</span><strong class="recommendation-status">Tavsiya</strong></div>
+        </div>
+        <p>Bu ekilgan daraxtzor emas. Joriy shamol va qum oqimi asosida tavsiya etilgan himoya yo‘lagi.</p>
+      </section>
+
+      <section class="image-refresh-card">
+        <button id="refreshMapBtn">↻ Ma’lumotlarni yangilash</button>
+        <div>
+          <span>So‘nggi yangilanish:</span>
+          <strong id="mapUpdatedTime">--</strong>
+        </div>
+      </section>
+    </aside>
+
+    <section class="image-main-area">
+      <div class="image-metric-row">
+        <article class="image-metric-card">
+          <div class="metric-symbol cyan">≋</div>
+          <div>
+            <span>Shamol tezligi</span>
+            <strong id="topWindSpeed">-- m/s</strong>
+            <small>O‘rtacha tezlik</small>
+          </div>
+        </article>
+
+        <article class="image-metric-card">
+          <div class="metric-symbol cyan compass">➤</div>
+          <div>
+            <span>Shamol yo‘nalishi</span>
+            <strong id="topWindDirection">--</strong>
+            <small>Ustun yo‘nalish</small>
+          </div>
+        </article>
+
+        <article class="image-metric-card temperature-card">
+          <div class="metric-symbol amber">☀</div>
+          <div>
+            <span>Harorat</span>
+            <strong id="topTemperature">--°C</strong>
+            <small>Quyoshli</small>
+          </div>
+          <div class="sparkline">
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </article>
+
+        <article class="image-metric-card vegetation-card">
+          <div class="veg-top">
+            <div class="metric-symbol greenish">◒</div>
+            <div>
+              <span>O‘simlik qoplami</span>
+              <strong id="topNdvi">--</strong>
+              <small>NDVI indeksi</small>
+            </div>
+            <b class="veg-status">O‘rta</b>
+          </div>
+          <div class="veg-bar">
+            <span>0</span>
+            <div><i id="ndviScaleMarker"></i></div>
+            <span>1</span>
+          </div>
+        </article>
       </div>
-    </div>
 
-    <div class="legend-box">
-      <h3>Xavf shkalasi</h3>
-      <div class="legend-row"><i class="lg low"></i> Past</div>
-      <div class="legend-row"><i class="lg med"></i> O‘rta</div>
-      <div class="legend-row"><i class="lg hi"></i> Yuqori</div>
-      <div class="legend-row"><i class="lg vhi"></i> Juda yuqori</div>
-    </div>
+      <section class="image-map-shell">
+        <div id="map"></div>
 
-    <div class="api-note">
-      Shamol ma’lumotlari ochiq meteorologik API asosida olinadi va davriy yangilanadi.
-    </div>
-  </div>
+        <div class="image-zoom-controls">
+          <button id="zoomPlus">+</button>
+          <button id="zoomMinus">−</button>
+          <button id="locateMap">⌖</button>
+        </div>
 
-  <div id="map"></div>
+        <button id="fullscreenMap" class="image-fullscreen">⛶ To‘liq ekran</button>
+
+        <div class="image-scale">20 km</div>
+      </section>
+    </section>
+  </section>
+
+  <footer class="image-footer">
+    <span></span>
+    <strong>♧ by Ikromov</strong>
+  </footer>
 </main>
-
-<footer class="site-footer">by Ikromov</footer>
 {% endblock %}
+
 {% block scripts %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="{{ url_for('static', filename='js/map_live.js') }}"></script>
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
 {% endblock %}
